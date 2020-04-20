@@ -185,6 +185,7 @@ conn = psycopg2.connect(
 
 cur = conn.cursor()
 root = tk.Tk()
+should_tic_toc = None
 
 def add_alarm():
     for widget in frame.winfo_children():
@@ -258,6 +259,7 @@ def set_alarm():
         time = alarm[1]
         data_str = date.strftime("%Y-%m-%d")
         time_str = time.strftime("%H:%M")
+        global data_time_str #defining data_time_str as a global variable
         data_time_str = data_str + " " + time_str
         alarm_tone = data2[int(choice2.get())]
         alarm_tone_name = alarm_tone[0].split('\\')[-1]
@@ -268,11 +270,12 @@ def set_alarm():
             now = datetime.now()
             dt_string = now.strftime("%Y-%m-%d %H:%M")
             return dt_string
-        def tone_on(data_time_str):
-            curr_time = current_time()
-            if data_time_str != curr_time:
-                tone_on(data_time_str) #rekurencja tutaj sie wykrzacza, trzeba by bylo zastosować 'sys.setrecursionlimit(limit)?
-            elif data_time_str == curr_time:
+        def tone_on():
+            global should_tic_toc
+            global data_time_str
+            should_tic_toc = root.after(2000, tone_on)
+            if data_time_str == current_time():
+                root.after_cancel(should_tic_toc)
                 def turn_off():
                     pygame.mixer.music.stop()
                     set_frame.destroy()
@@ -283,7 +286,7 @@ def set_alarm():
                 pygame.mixer.music.play()
                 turn_off = tk.Button(root, text=f"TIME TO GET UP! It's {data_time_str} - CLICK TO TURN OFF", command=turn_off)
                 turn_off.pack()
-        tone_on(data_time_str)
+        tone_on()
 
     def exit_menu():
         for widget in frame.winfo_children():
