@@ -15,7 +15,7 @@ conn = psycopg2.connect(
     host = "localhost",
     database = "expense_base",
     user = "postgres",
-    password = "majk1995",
+    password = ?????,
     port = "5433"
 )
 
@@ -97,8 +97,7 @@ months = {1: "January",
           12: "December"}
 
 #function that allows to plot data - MONTHLY SUM
-def plot_monthly_sum():  #można by to plotnąć używając po prostu pandasa zamiast seaborna: https://stackoverflow.com/questions/52385428/plot-point-markers-and-lines-in-different-hues-but-the-same-style-with-seaborn
-    df = psql.read_sql('select * from expenses', conn)
+def plot_monthly_sum():  
     options = {option for option in df['expense_type']}
     print("Type of expenses:")
     for option in options:
@@ -107,7 +106,7 @@ def plot_monthly_sum():  #można by to plotnąć używając po prostu pandasa za
     if your_choose == 'all':
         for key, value in months.items():
             print(key, "-", value)
-        month = int(input("Choose the month for which you want to see the chart: ")) # 14.09.2020 - zrobić funkcje ze można dla wybrac dla wszystkich miesiecy i wtedy w query pomijam "zerowe"
+        month = int(input("Choose the month for which you want to see the chart: "))
         df = psql.read_sql("select * from expenses where date_part('month',expenses.trans_date) = " + str(month), conn)
         x=df['trans_date']
         y=df['month_sum']
